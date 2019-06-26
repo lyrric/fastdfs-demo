@@ -4,12 +4,11 @@ import com.github.lyrric.model.BusinessException;
 import com.github.lyrric.service.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author wangxiaodong
@@ -29,5 +28,14 @@ public class FileController {
         return fileService.upload(file);
     }
 
-
+    @ApiOperation(value = "下载文件(这个接口用swagger测，会有文件名异常的BUG)")
+    @GetMapping(value = "/download/{id}")
+    void download(@PathVariable(name = "id") Long id, HttpServletResponse response){
+        fileService.download(id, response);
+    }
+    @ApiOperation(value = "图片浏览")
+    @GetMapping(value = "/overview/{id}")
+    void overview(@PathVariable(name = "id") Long id, HttpServletResponse response){
+        fileService.overview(id, response);
+    }
 }

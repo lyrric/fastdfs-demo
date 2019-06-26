@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 /**
  * Created on 2019-06-25.
@@ -30,6 +32,25 @@ public class FastdfsUtil {
         InputStream is = new ByteArrayInputStream(data);
         StorePath path = fastFileStorageClient.uploadFile(is, fileSize, extension, null);
         return path.getFullPath();
+    }
+
+    /**
+     * 下载文件，获取字节主句
+     * @param path
+     */
+    public byte[] download(String path){
+        String groupName  =path.split("/")[0];
+        path = path.substring(groupName.length()+1);
+        return fastFileStorageClient.downloadFile(groupName, path, is->{
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buffer = new byte[2048];
+            int n;
+            while(-1 != (n = is.read(buffer))){
+                out.write(buffer, 0, n);
+            }
+            return out.toByteArray();
+        });
+
     }
 
 }
