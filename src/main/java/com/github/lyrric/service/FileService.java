@@ -33,4 +33,11 @@ public interface FileService {
      * @param response
      */
     void overview(Long id, HttpServletResponse response);
+
+
+    /**
+     * 删除
+     * @param id
+     */
+    void delete(Long id);
 }

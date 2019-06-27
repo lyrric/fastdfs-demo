@@ -38,4 +38,9 @@ public class FileController {
     void overview(@PathVariable(name = "id") Long id, HttpServletResponse response){
         fileService.overview(id, response);
     }
+    @ApiOperation(value = "图片浏览")
+    @GetMapping(value = "/delete/{id}")
+    void delete(@PathVariable(name = "id") Long id){
+        fileService.delete(id);
+    }
 }

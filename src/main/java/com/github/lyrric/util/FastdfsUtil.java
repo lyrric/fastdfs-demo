@@ -50,7 +50,14 @@ public class FastdfsUtil {
             }
             return out.toByteArray();
         });
+    }
 
+    /**
+     * 删除文件
+     * @param path
+     */
+    public void delete(String path){
+        fastFileStorageClient.deleteFile(path);
     }
 
 }

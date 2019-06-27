@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tk.mybatis.mapper.weekend.Weekend;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +61,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public void download(Long id, HttpServletResponse response) {
         FastdfsFile fastdfsFile = fileMapper.selectByPrimaryKey(id);
-        if(fastdfsFile != null){
+        if(fastdfsFile != null && !fastdfsFile.getDeleted()){
             byte[] data = fastdfsUtil.download(fastdfsFile.getPath());
             IOUtil.download(response, data, fastdfsFile.getFileName());
         }
@@ -69,10 +70,24 @@ public class FileServiceImpl implements FileService {
     @Override
     public void overview(Long id, HttpServletResponse response) {
         FastdfsFile fastdfsFile = fileMapper.selectByPrimaryKey(id);
-        if(fastdfsFile != null && isPicture(fastdfsFile.getFileName())){
+        if(fastdfsFile != null && !fastdfsFile.getDeleted() && isPicture(fastdfsFile.getFileName())){
             byte[] data = fastdfsUtil.download(fastdfsFile.getPath());
             IOUtil.overview(response, data);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Long id) {
+        FastdfsFile file = fileMapper.selectByPrimaryKey(id);
+        if(id != null){
+            file.setDeleted(true);
+            file.setDeleteTime(new Date());
+            fileMapper.updateByPrimaryKey(file);
+            //可以做假删除
+            //fastdfsUtil.delete(file.getPath());
+        }
+
     }
 
     /**
